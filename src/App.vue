@@ -63,9 +63,35 @@
 							label="Search Popular Articles"
 							solo-inverted
 							clearable
+							hide-details
 							flat
-							loading="false"
+							@keyup.13="getSearchResults($event.target.value)"
 						></v-text-field>
+							<!-- @change="getSearchResults($event)" -->
+
+						<div class="row mb-10 mx-auto">
+							<div
+								class="col-sm-12 col-md-6 col-lg-4 align-self-center"
+								v-for="(article, index) in searchResults"
+								:key="index"
+							>
+								<v-card class="my-2 mx-auto" width="400" outlined>
+									<Article
+										:mediaImg="
+											article.urlToImage !== null
+												? article.urlToImage
+												: 'https://i.picsum.photos/id/357/200/200.jpg'
+										"
+										:title="article.title"
+										:author="
+											article.author !== null ? article.author : 'Anonymous'
+										"
+										:url="article.url"
+										:description="article.description"
+									/>
+								</v-card>
+							</div>
+						</div>
 					</v-container>
 				</v-tab-item>
 			</v-tabs-items>
@@ -121,6 +147,7 @@ export default {
 		fab: false,
 		tabModel: "feed",
 		results: [],
+		searchResults: [],
 	}),
 
 	beforeMount() {
@@ -149,6 +176,34 @@ export default {
 				this.results = response.data.articles;
 				this.filterResults();
 				console.log(this.results);
+				this.loading = false;
+			} catch (error) {
+				console.error(error);
+			}
+		},
+
+		async getSearchResults(query) {
+			this.loading = true;
+
+			const urlParams = {
+				apiKey: process.env.VUE_APP_NEWSKEY,
+				q: query,
+				sortBy: "popularity",
+				language: "en",
+				pageSize: 100,
+			};
+
+			const queryString = Object.keys(urlParams)
+				.map(function(key) {
+					return key + "=" + urlParams[key];
+				})
+				.join("&");
+
+			const url = `https://newsapi.org/v2/everything?${queryString}`;
+			try {
+				const response = await this.$axios.get(url);
+				this.searchResults = response.data.articles;
+				console.log(this.searchResults);
 				this.loading = false;
 			} catch (error) {
 				console.error(error);
