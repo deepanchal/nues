@@ -7,9 +7,7 @@
 				:key="index"
 			>
 				<v-card height="200" flat hover shaped color="oange lighten-1">
-					<v-card-title class="headline">{{
-						item.name
-					}}</v-card-title>
+					<v-card-title class="headline">{{ item.name }}</v-card-title>
 					<v-card-subtitle>{{ item.description }}</v-card-subtitle>
 				</v-card>
 			</div>
@@ -33,9 +31,16 @@ export default {
 	data: () => ({
 		loading: false,
 		providers: [],
-		unwantedProviders: "al-jazeera-english breitbart-news the-american-conservative bleacher-report ars-technica associated-press nhl-news".split(
-			" "
-		),
+		unwantedProviders: [
+			"al-jazeera-english",
+			"buzzfeed",
+			"breitbart-news",
+			"the-american-conservative",
+			"bleacher-report",
+			"ars-technica",
+			"associated-press",
+			"nhl-news",
+		],
 	}),
 
 	beforeMount() {
@@ -45,7 +50,20 @@ export default {
 	methods: {
 		async getSources() {
 			this.loading = true;
-			const url = `http://newsapi.org/v2/sources?apiKey=${process.env.VUE_APP_NEWSKEY}&country=us&language=en`;
+
+			const urlParams = {
+				apiKey: process.env.VUE_APP_NEWSKEY,
+				language: "en",
+				country: "us",
+			};
+
+			const queryString = Object.keys(urlParams)
+				.map(function(key) {
+					return key + "=" + urlParams[key];
+				})
+				.join("&");
+
+			const url = `http://newsapi.org/v2/sources?${queryString}`;
 			try {
 				const response = await this.$axios.get(url);
 				console.log(response);

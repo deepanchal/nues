@@ -130,7 +130,20 @@ export default {
 	methods: {
 		async getHeadlines() {
 			this.loading = true;
-			const url = `https://newsapi.org/v2/top-headlines?apiKey=${process.env.VUE_APP_NEWSKEY}&pageSize=100&language=en`;
+
+			const urlParams = {
+				apiKey: process.env.VUE_APP_NEWSKEY,
+				language: "en",
+				pageSize: 100,
+			};
+
+			const queryString = Object.keys(urlParams)
+				.map(function(key) {
+					return key + "=" + urlParams[key];
+				})
+				.join("&");
+
+			const url = `https://newsapi.org/v2/top-headlines?${queryString}`;
 			try {
 				const response = await this.$axios.get(url);
 				this.results = response.data.articles;
