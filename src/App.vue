@@ -2,7 +2,9 @@
 	<v-app>
 		<v-content>
 			<v-toolbar color="blue" dark>
-				<v-toolbar-title class="m-auto display-1">Nues</v-toolbar-title>
+				<v-toolbar-title class="headline font-weight-medium"
+					>NUES</v-toolbar-title
+				>
 				<v-spacer></v-spacer>
 
 				<v-btn @click="toggleTheme" icon>
@@ -31,13 +33,13 @@
 
 			<v-tabs-items v-model="tabModel">
 				<v-tab-item value="headlines">
-					<div class="row">
+					<div class="row mb-10 mx-auto">
 						<div
-							class="col-12 col-md-4 col-lg-3"
+							class="col-12 col-sm-12 col-md-6 col-lg-4 px-0  align-self-center"
 							v-for="(article, index) in results"
 							:key="index"
 						>
-							<v-card class="mx-auto my-4" width="340" hover>
+							<v-card class="my-2 mx-auto" width="400" outlined>
 								<Article
 									:mediaImg="
 										article.urlToImage !== null
@@ -45,7 +47,11 @@
 											: 'https://i.picsum.photos/id/357/200/200.jpg'
 									"
 									:title="article.title"
-									:author="article.author"
+									:author="
+										article.author !== null
+											? article.author
+											: 'Anonymous'
+									"
 									:url="article.url"
 									:description="article.description"
 								></Article>
@@ -53,10 +59,23 @@
 						</div>
 					</div>
 				</v-tab-item>
+
 				<v-tab-item value="sources">
 					<Sources />
 				</v-tab-item>
-				<v-tab-item value="feed">main feed</v-tab-item>
+
+				<v-tab-item value="feed">
+					<v-container>
+						<v-text-field
+							color="orange"
+							prepend-inner-icon="mdi-magnify"
+							label="Search Popular Articles"
+							solo-inverted
+							clearable
+							loading="false"
+						></v-text-field>
+					</v-container>
+				</v-tab-item>
 			</v-tabs-items>
 
 			<v-overlay :value="loading">
@@ -92,9 +111,9 @@ export default {
 	},
 
 	data: () => ({
-		themeIcon: "mdi-white-balance-sunny",
+		themeIcon: "mdi-brightness-3",
 		loading: false,
-		tabModel: "popular",
+		tabModel: "feed",
 		results: [],
 	}),
 
@@ -106,10 +125,10 @@ export default {
 		toggleTheme() {
 			if (this.$vuetify.theme.dark === false) {
 				this.$vuetify.theme.dark = true;
-				this.themeIcon = "mdi-brightness-3";
+				this.themeIcon = "mdi-white-balance-sunny";
 			} else {
 				this.$vuetify.theme.dark = false;
-				this.themeIcon = "mdi-white-balance-sunny";
+				this.themeIcon = "mdi-brightness-3";
 			}
 		},
 
@@ -118,12 +137,21 @@ export default {
 			const url = `https://newsapi.org/v2/top-headlines?apiKey=${process.env.VUE_APP_NEWSKEY}&pageSize=100&language=en`;
 			try {
 				const response = await this.$axios.get(url);
-				console.log(response);
 				this.results = response.data.articles;
+				this.filterResults();
+				console.log(this.results);
 				this.loading = false;
 			} catch (error) {
 				console.error(error);
 			}
+		},
+
+		filterResults() {
+			this.results = this.results.filter((item) => {
+				const condition =
+					item.description === null || item.source.id === "buzzfeed";
+				return !condition;
+			});
 		},
 	},
 };
