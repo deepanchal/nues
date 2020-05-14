@@ -12,52 +12,43 @@
 				</v-btn>
 
 				<template v-slot:extension>
-					<v-tabs
-						v-model="tabModel"
-						centered
-						fixed-tabs
-						slider-color="orange"
-					>
+					<v-tabs v-model="tabModel" centered fixed-tabs slider-color="orange">
 						<v-tab href="#headlines" active-class="white--text"
 							>Headlines</v-tab
 						>
-						<v-tab href="#sources" active-class="white--text"
-							>Sources</v-tab
-						>
-						<v-tab href="#feed" active-class="white--text"
-							>Feed</v-tab
-						>
+						<v-tab href="#sources" active-class="white--text">Sources</v-tab>
+						<v-tab href="#feed" active-class="white--text">Feed</v-tab>
 					</v-tabs>
 				</template>
 			</v-toolbar>
 
 			<v-tabs-items v-model="tabModel">
 				<v-tab-item value="headlines">
-					<div class="row mb-10 mx-auto">
-						<div
-							class="col-12 col-sm-12 col-md-6 col-lg-4 px-0 align-self-center"
-							v-for="(article, index) in results"
-							:key="index"
-						>
-							<v-card class="my-2 mx-auto" width="400" outlined>
-								<Article
-									:mediaImg="
-										article.urlToImage !== null
-											? article.urlToImage
-											: 'https://i.picsum.photos/id/357/200/200.jpg'
-									"
-									:title="article.title"
-									:author="
-										article.author !== null
-											? article.author
-											: 'Anonymous'
-									"
-									:url="article.url"
-									:description="article.description"
-								></Article>
-							</v-card>
+					<v-container>
+						<div class="row mb-10 mx-auto">
+							<div
+								class="col-sm-12 col-md-6 col-lg-4 align-self-center"
+								v-for="(article, index) in results"
+								:key="index"
+							>
+								<v-card class="my-2 mx-auto" width="400" outlined>
+									<Article
+										:mediaImg="
+											article.urlToImage !== null
+												? article.urlToImage
+												: 'https://i.picsum.photos/id/357/200/200.jpg'
+										"
+										:title="article.title"
+										:author="
+											article.author !== null ? article.author : 'Anonymous'
+										"
+										:url="article.url"
+										:description="article.description"
+									/>
+								</v-card>
+							</div>
 						</div>
-					</div>
+					</v-container>
 				</v-tab-item>
 
 				<v-tab-item value="sources">
@@ -72,6 +63,7 @@
 							label="Search Popular Articles"
 							solo-inverted
 							clearable
+							flat
 							loading="false"
 						></v-text-field>
 					</v-container>
@@ -82,7 +74,6 @@
 				v-scroll="onScroll"
 				v-show="fab"
 				fab
-				dark
 				fixed
 				bottom
 				right
