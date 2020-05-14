@@ -35,7 +35,7 @@
 				<v-tab-item value="headlines">
 					<div class="row mb-10 mx-auto">
 						<div
-							class="col-12 col-sm-12 col-md-6 col-lg-4 px-0  align-self-center"
+							class="col-12 col-sm-12 col-md-6 col-lg-4 px-0 align-self-center"
 							v-for="(article, index) in results"
 							:key="index"
 						>
@@ -78,6 +78,20 @@
 				</v-tab-item>
 			</v-tabs-items>
 
+			<v-btn
+				v-scroll="onScroll"
+				v-show="fab"
+				fab
+				dark
+				fixed
+				bottom
+				right
+				color="primary"
+				@click="toTop"
+			>
+				<v-icon>mdi-chevron-up</v-icon>
+			</v-btn>
+
 			<v-overlay :value="loading">
 				<v-progress-circular
 					color="orange"
@@ -113,6 +127,7 @@ export default {
 	data: () => ({
 		themeIcon: "mdi-brightness-3",
 		loading: false,
+		fab: false,
 		tabModel: "feed",
 		results: [],
 	}),
@@ -122,16 +137,6 @@ export default {
 	},
 
 	methods: {
-		toggleTheme() {
-			if (this.$vuetify.theme.dark === false) {
-				this.$vuetify.theme.dark = true;
-				this.themeIcon = "mdi-white-balance-sunny";
-			} else {
-				this.$vuetify.theme.dark = false;
-				this.themeIcon = "mdi-brightness-3";
-			}
-		},
-
 		async getHeadlines() {
 			this.loading = true;
 			const url = `https://newsapi.org/v2/top-headlines?apiKey=${process.env.VUE_APP_NEWSKEY}&pageSize=100&language=en`;
@@ -152,6 +157,26 @@ export default {
 					item.description === null || item.source.id === "buzzfeed";
 				return !condition;
 			});
+		},
+
+		toggleTheme() {
+			if (this.$vuetify.theme.dark === false) {
+				this.$vuetify.theme.dark = true;
+				this.themeIcon = "mdi-white-balance-sunny";
+			} else {
+				this.$vuetify.theme.dark = false;
+				this.themeIcon = "mdi-brightness-3";
+			}
+		},
+
+		onScroll(e) {
+			if (typeof window === "undefined") return;
+			const top = window.pageYOffset || e.target.scrollTop || 0;
+			this.fab = top > 20;
+		},
+
+		toTop() {
+			this.$vuetify.goTo(0);
 		},
 	},
 };
