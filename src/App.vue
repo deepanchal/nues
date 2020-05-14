@@ -1,18 +1,18 @@
 <template>
 	<v-app>
 		<v-content>
-			<v-toolbar color="blue" dark>
+			<v-toolbar color="primary" dark>
 				<v-toolbar-title class="headline font-weight-medium"
 					>NUES</v-toolbar-title
 				>
 				<v-spacer></v-spacer>
 
 				<v-btn @click="toggleTheme" icon>
-					<v-icon>{{ this.themeIcon }}</v-icon>
+					<v-icon color="accent">{{ this.themeIcon }}</v-icon>
 				</v-btn>
 
 				<template v-slot:extension>
-					<v-tabs v-model="tabModel" centered fixed-tabs slider-color="orange">
+					<v-tabs v-model="tabModel" centered fixed-tabs slider-color="accent">
 						<v-tab href="#headlines" active-class="white--text"
 							>Headlines</v-tab
 						>
@@ -58,7 +58,7 @@
 				<v-tab-item value="feed">
 					<v-container>
 						<v-text-field
-							color="orange"
+							color="accent"
 							prepend-inner-icon="mdi-magnify"
 							label="Search Popular Articles"
 							solo-inverted
@@ -67,7 +67,6 @@
 							flat
 							@keyup.13="getSearchResults($event.target.value)"
 						></v-text-field>
-							<!-- @change="getSearchResults($event)" -->
 
 						<div class="row mb-10 mx-auto">
 							<div
@@ -111,7 +110,7 @@
 
 			<v-overlay :value="loading">
 				<v-progress-circular
-					color="orange"
+					color="secondary"
 					width="5"
 					indeterminate
 					size="72"
