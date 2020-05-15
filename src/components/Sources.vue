@@ -2,81 +2,64 @@
 	<v-container class="mb-12">
 		<div class="row">
 			<div
-				class="col-12 col-md-4 col-lg-4"
+				class="col-12 col-sm-6 col-lg-4"
 				v-for="(item, index) in providers"
 				:key="index"
 			>
-				<v-card height="200" flat hover shaped color="oange lighten-1">
-					<v-card-title class="headline">{{ item.name }}</v-card-title>
-					<v-card-subtitle>{{ item.description }}</v-card-subtitle>
+				<v-card flat hover shaped color="secondary">
+					<div class="d-flex flex-no-wrap justify-space-between">
+						<div>
+							<v-card-title
+								class="headline"
+								style="wordBreak: normal"
+								v-text="item.name"
+							></v-card-title>
+							<v-card-subtitle v-text="item.category"></v-card-subtitle>
+							<v-card-actions class="pt-0">
+								<v-btn icon @click="show = !show">
+									<v-icon>{{
+										show ? "mdi-chevron-up" : "mdi-chevron-down"
+									}}</v-icon>
+								</v-btn>
+							</v-card-actions>
+						</div>
+
+						<v-avatar class="ma-3" size="90" tile>
+							<v-img
+								src="https://cdn.pixabay.com/photo/2013/07/12/19/16/newspaper-154444_1280.png"
+							></v-img>
+						</v-avatar>
+					</div>
+
+					<v-expand-transition>
+						<div v-show="show">
+							<v-divider></v-divider>
+
+							<v-card-text style="wordBreak: normal">
+								{{ item.description }}
+							</v-card-text>
+						</div>
+					</v-expand-transition>
 				</v-card>
 			</div>
 		</div>
-
-		<v-overlay :value="loading">
-			<v-progress-circular
-				color="orange"
-				width="5"
-				indeterminate
-				size="72"
-			></v-progress-circular>
-		</v-overlay>
 	</v-container>
 </template>
 
 <script>
+import nuesProviders from "../sources";
+
 export default {
 	name: "Sources",
 
 	data: () => ({
 		loading: false,
-		providers: [],
-		unwantedProviders: [
-			"al-jazeera-english",
-			"buzzfeed",
-			"breitbart-news",
-			"the-american-conservative",
-			"bleacher-report",
-			"ars-technica",
-			"associated-press",
-			"nhl-news",
-		],
+		providers: nuesProviders,
+		show: false,
 	}),
 
-	beforeMount() {
-		this.getSources();
-	},
+	beforeMount() {},
 
-	methods: {
-		async getSources() {
-			this.loading = true;
-
-			const urlParams = {
-				apiKey: process.env.VUE_APP_NEWSKEY,
-				language: "en",
-				country: "us",
-			};
-
-			const queryString = Object.keys(urlParams)
-				.map(function(key) {
-					return key + "=" + urlParams[key];
-				})
-				.join("&");
-
-			const url = `http://newsapi.org/v2/sources?${queryString}`;
-			try {
-				const response = await this.$axios.get(url);
-				console.log(response);
-				this.providers = response.data.sources;
-
-				this.providers = this.providers.filter((x) => {
-					return !this.unwantedProviders.includes(x.id);
-				});
-				this.loading = false;
-			} catch (error) {
-				console.error(error);
-			}
-		},
-	},
+	methods: {},
 };
 </script>
