@@ -1,9 +1,9 @@
 <template>
 	<v-app>
 		<v-content>
-			<v-toolbar color="primary" dark>
+			<v-toolbar color="primary" light>
 				<v-toolbar-title class="headline font-weight-medium"
-					>NUES</v-toolbar-title
+					>Nues</v-toolbar-title
 				>
 				<v-spacer></v-spacer>
 
@@ -13,11 +13,11 @@
 
 				<template v-slot:extension>
 					<v-tabs v-model="tabModel" centered fixed-tabs slider-color="accent">
-						<v-tab href="#headlines" active-class="white--text"
+						<v-tab href="#headlines" active-class="black--text"
 							>Headlines</v-tab
 						>
-						<v-tab href="#sources" active-class="white--text">Sources</v-tab>
-						<v-tab href="#feed" active-class="white--text">Feed</v-tab>
+						<v-tab href="#sources" active-class="black--text">Sources</v-tab>
+						<v-tab href="#feed" active-class="black--text">Feed</v-tab>
 					</v-tabs>
 				</template>
 			</v-toolbar>
@@ -77,14 +77,12 @@
 								<v-card class="my-2 mx-auto" width="400" outlined>
 									<Article
 										:mediaImg="
-											article.urlToImage !== null
+											article.urlToImage
 												? article.urlToImage
-												: 'https://i.picsum.photos/id/357/200/200.jpg'
+												: 'https://cdn.pixabay.com/photo/2013/07/12/19/16/newspaper-154444_1280.png'
 										"
 										:title="article.title"
-										:author="
-											article.author !== null ? article.author : 'Anonymous'
-										"
+										:author="article.author ? article.author : 'Anonymous'"
 										:url="article.url"
 										:description="article.description"
 									/>
@@ -118,7 +116,15 @@
 			</v-overlay>
 		</v-content>
 
-		<v-footer absolute class="font-weight-medium">
+		<v-footer class="font-weight-medium">
+			<v-col class="text-center" cols="12">
+			<v-container>
+				All product names, logos, and brands are property of their respective
+				owners. All company, product and service names used in this website are
+				for identification purposes only. Use of these names, logos, and brands
+				does not imply endorsement.
+			</v-container>
+			</v-col>
 			<v-col class="text-center" cols="12">
 				Made with &hearts; using
 				<a href="https://vuetifyjs.com/" target="_blank">Vuetify</a> and
@@ -144,13 +150,14 @@ export default {
 		themeIcon: "mdi-brightness-3",
 		loading: false,
 		fab: false,
-		tabModel: "feed",
+		tabModel: "sources",
 		results: [],
 		searchResults: [],
 	}),
 
 	beforeMount() {
-		this.getHeadlines();
+		// this.getHeadlines();
+		// this.getSearchResults("top");
 	},
 
 	methods: {
