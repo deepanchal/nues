@@ -1,9 +1,10 @@
 <template>
 	<v-app>
 		<v-content>
-			<v-toolbar color="primary" light>
-				<v-toolbar-title class="headline font-weight-medium"
-					>Nues</v-toolbar-title
+			<v-toolbar fixed color="primary" light>
+				<v-icon class="pr-3">mdi-newspaper</v-icon>
+				<v-toolbar-title class="headline font-weight-medium">
+					Nues</v-toolbar-title
 				>
 				<v-spacer></v-spacer>
 
@@ -34,16 +35,15 @@
 								<v-card class="my-2 mx-auto" width="400" outlined>
 									<Article
 										:mediaImg="
-											article.urlToImage !== null
+											article.urlToImage
 												? article.urlToImage
-												: 'https://i.picsum.photos/id/357/200/200.jpg'
+												: 'https://cdn.pixabay.com/photo/2013/07/12/19/16/newspaper-154444_1280.png'
 										"
 										:title="article.title"
-										:author="
-											article.author !== null ? article.author : 'Anonymous'
-										"
+										:author="article.author ? article.author : 'Anonymous'"
 										:url="article.url"
 										:description="article.description"
+										:id="article.source.id ? article.source.id : 'unknown'"
 									/>
 								</v-card>
 							</div>
@@ -52,7 +52,30 @@
 				</v-tab-item>
 
 				<v-tab-item value="sources">
-					<Sources />
+					<v-container class="mb-12">
+						<div class="row">
+							<div
+								class="col-12 col-sm-6 col-md-4"
+								v-for="(item, index) in providers"
+								:key="index"
+							>
+								<v-card
+									flat
+									hover
+									shaped
+									color="secondary"
+									@click="getResultsFromSources(item.id)"
+								>
+									<Source
+										:name="item.name"
+										:category="item.category"
+										:logo="item.logo"
+										:description="item.description"
+									/>
+								</v-card>
+							</div>
+						</div>
+					</v-container>
 				</v-tab-item>
 
 				<v-tab-item value="feed">
@@ -85,6 +108,7 @@
 										:author="article.author ? article.author : 'Anonymous'"
 										:url="article.url"
 										:description="article.description"
+										:id="article.source.id ? article.source.id : 'unknown'"
 									/>
 								</v-card>
 							</div>
@@ -118,12 +142,12 @@
 
 		<v-footer class="font-weight-medium">
 			<v-col class="text-center" cols="12">
-			<v-container>
-				All product names, logos, and brands are property of their respective
-				owners. All company, product and service names used in this website are
-				for identification purposes only. Use of these names, logos, and brands
-				does not imply endorsement.
-			</v-container>
+				<v-container>
+					All product names, logos, and brands are property of their respective
+					owners. All company, product and service names used in this website
+					are for identificational and educational purposes only. Use of these
+					names, logos, and brands does not imply endorsement.
+				</v-container>
 			</v-col>
 			<v-col class="text-center" cols="12">
 				Made with &hearts; using
@@ -135,14 +159,15 @@
 </template>
 
 <script>
-import Sources from "./components/Sources";
+import nuesProviders from "./sources";
+import Source from "./components/Source";
 import Article from "./components/Article";
 
 export default {
 	name: "App",
 
 	components: {
-		Sources,
+		Source,
 		Article,
 	},
 
@@ -151,30 +176,33 @@ export default {
 		loading: false,
 		fab: false,
 		tabModel: "sources",
+		providers: nuesProviders,
 		results: [],
 		searchResults: [],
 	}),
 
 	beforeMount() {
-		// this.getHeadlines();
-		// this.getSearchResults("top");
+		this.getHeadlines();
+		this.getSearchResults("world");
 	},
 
 	methods: {
+		buildQueryStr(obj) {
+			return Object.keys(obj)
+				.map(function(key) {
+					return key + "=" + obj[key];
+				})
+				.join("&");
+		},
+
 		async getHeadlines() {
 			this.loading = true;
 
-			const urlParams = {
+			const queryString = this.buildQueryStr({
 				apiKey: process.env.VUE_APP_NEWSKEY,
 				language: "en",
 				pageSize: 100,
-			};
-
-			const queryString = Object.keys(urlParams)
-				.map(function(key) {
-					return key + "=" + urlParams[key];
-				})
-				.join("&");
+			});
 
 			const url = `https://newsapi.org/v2/top-headlines?${queryString}`;
 			try {
@@ -188,22 +216,39 @@ export default {
 			}
 		},
 
+		async getResultsFromSources(srcID) {
+			this.loading = true;
+			this.tabModel = "feed";
+			const queryString = this.buildQueryStr({
+				apiKey: process.env.VUE_APP_NEWSKEY,
+				sortBy: "popularity",
+				sources: srcID,
+				language: "en",
+				pageSize: 100,
+			});
+
+			const url = `https://newsapi.org/v2/everything?${queryString}`;
+			try {
+				const response = await this.$axios.get(url);
+				this.searchResults = response.data.articles;
+				console.log(this.searchResults);
+				this.loading = false;
+			} catch (error) {
+				console.error(error);
+			}
+			this.toTop();
+		},
+
 		async getSearchResults(query) {
 			this.loading = true;
 
-			const urlParams = {
+			const queryString = this.buildQueryStr({
 				apiKey: process.env.VUE_APP_NEWSKEY,
 				q: query,
 				sortBy: "popularity",
 				language: "en",
 				pageSize: 100,
-			};
-
-			const queryString = Object.keys(urlParams)
-				.map(function(key) {
-					return key + "=" + urlParams[key];
-				})
-				.join("&");
+			});
 
 			const url = `https://newsapi.org/v2/everything?${queryString}`;
 			try {
