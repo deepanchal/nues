@@ -117,6 +117,14 @@
 				</v-tab-item>
 			</v-tabs-items>
 
+			<!-- Extra features like loaders, Handling error messages, scrollToTop -->
+			<v-snackbar v-model="msgBox" color="error" top>
+				{{ errMsg }}
+				<v-btn color="white" icon @click="msgBox = false">
+					<v-icon>mdi-close</v-icon>
+				</v-btn>
+			</v-snackbar>
+
 			<v-btn
 				v-scroll="onScroll"
 				v-show="fab"
@@ -132,7 +140,7 @@
 
 			<v-overlay :value="loading">
 				<v-progress-circular
-					color="secondary"
+					color="accent"
 					width="5"
 					indeterminate
 					size="72"
@@ -176,14 +184,16 @@ export default {
 		loading: false,
 		fab: false,
 		tabModel: "sources",
+		msgBox: false,
+		errMsg: "Oops, Something went Wrong 😕",
 		providers: nuesProviders,
 		results: [],
 		searchResults: [],
 	}),
 
 	beforeMount() {
-		this.getHeadlines();
-		this.getSearchResults("world");
+		// this.getHeadlines();
+		// this.getSearchResults("world");
 	},
 
 	methods: {
@@ -212,6 +222,8 @@ export default {
 				console.log(this.results);
 				this.loading = false;
 			} catch (error) {
+				this.loading = false;
+				this.msgBox = true;
 				console.error(error);
 			}
 		},
@@ -234,6 +246,8 @@ export default {
 				console.log(this.searchResults);
 				this.loading = false;
 			} catch (error) {
+				this.loading = false;
+				this.msgBox = true;
 				console.error(error);
 			}
 			this.toTop();
@@ -257,6 +271,8 @@ export default {
 				console.log(this.searchResults);
 				this.loading = false;
 			} catch (error) {
+				this.loading = false;
+				this.msgBox = true;
 				console.error(error);
 			}
 		},
