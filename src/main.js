@@ -14,9 +14,9 @@ new Vue({
       dark: false,
       themes: {
         dark: {
-          primary: '#66E96C',
+          primary: '#14DA8F',
           accent: '#D200FB',
-          secondary: '#E0E0E0',
+          secondary: '#26C6DA',
           success: '#4CAF50',
           info: '#2196F3',
           warning: '#FB8C00',
