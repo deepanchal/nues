@@ -371,7 +371,7 @@ const nuesProviders = [
     },
     {
         id: "the-wall-street-journal",
-        name: "The Wall Street Journal",
+        name: "Wall Street Journal",
         description: "WSJ online coverage of breaking news and current headlines from the US and around the world. Top stories, photos, videos, detailed analysis and in-depth reporting.",
         url: "http://www.wsj.com",
         logo: "https://thesocialinstitute.com/wp-content/uploads/WSJ-logo-square.jpg",
