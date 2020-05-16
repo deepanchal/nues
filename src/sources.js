@@ -100,16 +100,6 @@ const nuesProviders = [
         country: "us"
     },
     {
-        id: "espn",
-        name: "ESPN",
-        description: "ESPN has up-to-the-minute sports news coverage, scores, highlights and commentary for NFL, MLB, NBA, College Football, NCAA Basketball and more.",
-        url: "http://espn.go.com",
-        logo: "https://chsaanow.com/wp-content/uploads/2019/06/espn.png",
-        category: "sports",
-        language: "en",
-        country: "us"
-    },
-    {
         id: "fortune",
         name: "Fortune",
         description: "Fortune 500 Daily and Breaking Business News",
@@ -176,16 +166,6 @@ const nuesProviders = [
         url: "https://mashable.com",
         logo: "https://media.glassdoor.com/sqll/255718/mashable-squarelogo-1430326903133.png",
         category: "entertainment",
-        language: "en",
-        country: "us"
-    },
-    {
-        id: "medical-news-today",
-        name: "Medical News Today",
-        description: "Medical news and health news headlines posted throughout the day, every day.",
-        url: "http://www.medicalnewstoday.com",
-        logo: "https://pbs.twimg.com/profile_images/846771226483671040/Q352DFzt_400x400.jpg",
-        category: "health",
         language: "en",
         country: "us"
     },
@@ -316,16 +296,6 @@ const nuesProviders = [
         url: "http://www.polygon.com",
         logo: "https://i.kym-cdn.com/entries/icons/facebook/000/020/540/polygonlol.jpg",
         category: "entertainment",
-        language: "en",
-        country: "us"
-    },
-    {
-        id: "recode",
-        name: "Recode",
-        description: "Get the latest independent tech news, reviews and analysis from Recode with the most informed and respected journalists in technology and media.",
-        url: "http://www.recode.net",
-        logo: "https://www.logolynx.com/images/logolynx/11/115e0a006c8e7ed9fc309199133c6a7d.png",
-        category: "technology",
         language: "en",
         country: "us"
     },
