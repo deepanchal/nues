@@ -1,10 +1,10 @@
 <template>
 	<div>
-		<v-img class="white--text" height="200" :src="mediaImg"> </v-img>
+		<v-img class="white--text align-end" height="200" :src="mediaImg">
+			<v-chip class="my-2 mx-2">{{ id.toUpperCase() }}</v-chip></v-img
+		>
 		<v-card-title style="wordBreak: normal">{{ title }}</v-card-title>
-		<v-card-subtitle style="wordBreak: normal">{{
-			author
-		}}</v-card-subtitle>
+		<v-card-subtitle style="wordBreak: normal">{{ author }}</v-card-subtitle>
 
 		<v-card-text>
 			<div style="wordBreak: normal">{{ description }}</div>
@@ -45,6 +45,7 @@ export default {
 		description: String,
 		url: String,
 		mediaImg: String,
+		id: String,
 	},
 };
 </script>
