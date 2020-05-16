@@ -26,7 +26,7 @@
 			<v-tabs-items v-model="tabModel">
 				<v-tab-item value="headlines">
 					<v-container>
-						<div class="row mb-10 mx-auto">
+						<div class="row mx-auto">
 							<div
 								class="col-sm-12 col-md-6 col-lg-4 align-self-center"
 								v-for="(article, index) in results"
@@ -53,16 +53,17 @@
 				</v-tab-item>
 
 				<v-tab-item value="sources">
-					<v-container class="mb-12">
+					<v-container>
 						<div class="row">
 							<div
-								class="col-12 col-sm-6 col-md-4"
+								class="col-12 col-sm-6 col-lg-4"
 								v-for="(item, index) in providers"
 								:key="index"
 							>
 								<v-card
 									outlined
 									hover
+									light
 									class="blue-grey lighten-4"
 									@click="(loading = true), getResultsFromSources(item.id)"
 								>
@@ -93,7 +94,7 @@
 							"
 						></v-text-field>
 
-						<div class="row mb-10 mx-auto">
+						<div class="row mx-auto">
 							<div
 								class="col-sm-12 col-md-6 col-lg-4 align-self-center"
 								v-for="(article, index) in searchResults"
