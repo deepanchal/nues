@@ -7,7 +7,10 @@
 					style="wordBreak: normal"
 					v-text="name"
 				></v-card-title>
-				<v-card-subtitle v-text="category"></v-card-subtitle>
+				<v-card-subtitle
+					class="overline ml-1"
+					v-text="category"
+				></v-card-subtitle>
 				<v-card-actions class="pt-0">
 					<v-btn icon @click.stop.prevent="show = !show">
 						<v-icon>{{ show ? "mdi-chevron-up" : "mdi-chevron-down" }}</v-icon>
@@ -16,13 +19,7 @@
 			</div>
 
 			<v-avatar class="ma-3" size="80" tile>
-				<v-img
-					:src="
-						logo
-							? logo
-							: 'https://cdn.pixabay.com/photo/2013/07/12/19/16/newspaper-154444_1280.png'
-					"
-				></v-img>
+				<v-img :src="logo"></v-img>
 			</v-avatar>
 		</div>
 
@@ -49,12 +46,7 @@ export default {
 	},
 
 	data: () => ({
-		loading: false,
 		show: false,
 	}),
-
-	beforeMount() {},
-
-	methods: {},
 };
 </script>

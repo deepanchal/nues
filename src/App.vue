@@ -34,16 +34,17 @@
 							>
 								<v-card class="my-2 mx-auto" width="400" outlined>
 									<Article
-										:mediaImg="
-											article.urlToImage
-												? article.urlToImage
-												: 'https://cdn.pixabay.com/photo/2013/07/12/19/16/newspaper-154444_1280.png'
-										"
+										:mediaImg="article.urlToImage"
 										:title="article.title"
 										:author="article.author ? article.author : 'Anonymous'"
 										:url="article.url"
 										:description="article.description"
-										:id="article.source.id ? article.source.id : 'unknown'"
+										:id="
+											article.source.id
+												? article.source.id
+												: article.source.name.replace('.com', '')
+										"
+										:date="article.publishedAt"
 									/>
 								</v-card>
 							</div>
@@ -60,11 +61,10 @@
 								:key="index"
 							>
 								<v-card
-									flat
+									outlined
 									hover
-									shaped
-									color="secondary"
-									@click="getResultsFromSources(item.id)"
+									class="blue-grey lighten-4"
+									@click="(loading = true), getResultsFromSources(item.id)"
 								>
 									<Source
 										:name="item.name"
@@ -88,7 +88,9 @@
 							clearable
 							hide-details
 							flat
-							@keyup.13="getSearchResults($event.target.value)"
+							@keyup.13="
+								(loading = true), getSearchResults($event.target.value)
+							"
 						></v-text-field>
 
 						<div class="row mb-10 mx-auto">
@@ -99,16 +101,17 @@
 							>
 								<v-card class="my-2 mx-auto" width="400" outlined>
 									<Article
-										:mediaImg="
-											article.urlToImage
-												? article.urlToImage
-												: 'https://cdn.pixabay.com/photo/2013/07/12/19/16/newspaper-154444_1280.png'
-										"
+										:mediaImg="article.urlToImage"
 										:title="article.title"
 										:author="article.author ? article.author : 'Anonymous'"
 										:url="article.url"
 										:description="article.description"
-										:id="article.source.id ? article.source.id : 'unknown'"
+										:id="
+											article.source.id
+												? article.source.id
+												: article.source.name.replace('.com', '')
+										"
+										:date="article.publishedAt"
 									/>
 								</v-card>
 							</div>
@@ -192,8 +195,8 @@ export default {
 	}),
 
 	beforeMount() {
-		// this.getHeadlines();
-		// this.getSearchResults("world");
+		this.getHeadlines();
+		this.getSearchResults("world");
 	},
 
 	methods: {
@@ -218,7 +221,12 @@ export default {
 			try {
 				const response = await this.$axios.get(url);
 				this.results = response.data.articles;
-				this.filterResults();
+				this.results = this.results.filter((item) => {
+					const condition =
+						item.description === null || item.source.id === "buzzfeed";
+					return !condition;
+				});
+
 				console.log(this.results);
 				this.loading = false;
 			} catch (error) {
@@ -229,7 +237,6 @@ export default {
 		},
 
 		async getResultsFromSources(srcID) {
-			this.loading = true;
 			this.tabModel = "feed";
 			const queryString = this.buildQueryStr({
 				apiKey: process.env.VUE_APP_NEWSKEY,
@@ -254,14 +261,13 @@ export default {
 		},
 
 		async getSearchResults(query) {
-			this.loading = true;
-
 			const queryString = this.buildQueryStr({
 				apiKey: process.env.VUE_APP_NEWSKEY,
-				q: query,
+				q: `"${query}"`,
 				sortBy: "popularity",
 				language: "en",
 				pageSize: 100,
+				excludeDomains: "buzzfeed.com",
 			});
 
 			const url = `https://newsapi.org/v2/everything?${queryString}`;
@@ -275,14 +281,6 @@ export default {
 				this.msgBox = true;
 				console.error(error);
 			}
-		},
-
-		filterResults() {
-			this.results = this.results.filter((item) => {
-				const condition =
-					item.description === null || item.source.id === "buzzfeed";
-				return !condition;
-			});
 		},
 
 		toggleTheme() {
