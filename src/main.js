@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import Vuetify from 'vuetify/lib';
+import Vuetify from 'vuetify/lib'
 import App from './App.vue'
 const axios = require('axios');
 

@@ -32,21 +32,29 @@
 								v-for="(article, index) in results"
 								:key="index"
 							>
-								<v-card class="my-2 mx-auto" width="400" outlined>
-									<Article
-										:mediaImg="article.urlToImage"
-										:title="article.title"
-										:author="article.author ? article.author : 'Anonymous'"
-										:url="article.url"
-										:description="article.description"
-										:id="
-											article.source.id
-												? article.source.id
-												: article.source.name.replace('.com', '')
-										"
-										:date="article.publishedAt"
-									/>
-								</v-card>
+								<v-lazy
+									:options="{
+										threshold: 0.5,
+									}"
+									transition="scroll-y-reverse-transition"
+									min-height="350"
+								>
+									<v-card class="my-2 mx-auto" width="400" outlined>
+										<Article
+											:mediaImg="article.urlToImage"
+											:title="article.title"
+											:author="article.author ? article.author : 'Anonymous'"
+											:url="article.url"
+											:description="article.description"
+											:id="
+												article.source.id
+													? article.source.id
+													: article.source.name.replace('.com', '')
+											"
+											:date="article.publishedAt"
+										/>
+									</v-card>
+								</v-lazy>
 							</div>
 						</div>
 					</v-container>
@@ -60,20 +68,28 @@
 								v-for="(item, index) in providers"
 								:key="index"
 							>
-								<v-card
-									outlined
-									hover
-									light
-									class="blue-grey lighten-4"
-									@click="(loading = true), getResultsFromSources(item.id)"
+								<v-lazy
+									:options="{
+										threshold: 0.5,
+									}"
+									transition="scroll-y-reverse-transition"
+									min-height="100"
 								>
-									<Source
-										:name="item.name"
-										:category="item.category"
-										:logo="item.logo"
-										:description="item.description"
-									/>
-								</v-card>
+									<v-card
+										outlined
+										hover
+										light
+										class="blue-grey lighten-4"
+										@click="(loading = true), getResultsFromSources(item.id)"
+									>
+										<Source
+											:name="item.name"
+											:category="item.category"
+											:logo="item.logo"
+											:description="item.description"
+										/>
+									</v-card>
+								</v-lazy>
 							</div>
 						</div>
 					</v-container>
@@ -100,21 +116,29 @@
 								v-for="(article, index) in searchResults"
 								:key="index"
 							>
-								<v-card class="my-2 mx-auto" width="400" outlined>
-									<Article
-										:mediaImg="article.urlToImage"
-										:title="article.title"
-										:author="article.author ? article.author : 'Anonymous'"
-										:url="article.url"
-										:description="article.description"
-										:id="
-											article.source.id
-												? article.source.id
-												: article.source.name.replace('.com', '')
-										"
-										:date="article.publishedAt"
-									/>
-								</v-card>
+								<v-lazy
+									:options="{
+										threshold: 0.5,
+									}"
+									transition="scroll-y-reverse-transition"
+									min-height="350"
+								>
+									<v-card class="my-2 mx-auto" width="400" outlined>
+										<Article
+											:mediaImg="article.urlToImage"
+											:title="article.title"
+											:author="article.author ? article.author : 'Anonymous'"
+											:url="article.url"
+											:description="article.description"
+											:id="
+												article.source.id
+													? article.source.id
+													: article.source.name.replace('.com', '')
+											"
+											:date="article.publishedAt"
+										/>
+									</v-card>
+								</v-lazy>
 							</div>
 						</div>
 					</v-container>
@@ -172,15 +196,12 @@
 
 <script>
 import nuesProviders from "./sources";
-import Source from "./components/Source";
-import Article from "./components/Article";
-
 export default {
 	name: "App",
 
 	components: {
-		Source,
-		Article,
+		Source: () => import("./components/Source"),
+		Article: () => import("./components/Article"),
 	},
 
 	data: () => ({
@@ -197,7 +218,9 @@ export default {
 
 	beforeMount() {
 		this.getHeadlines();
-		this.getSearchResults("world");
+		this.getSearchResults(
+			this.randomize(["world", "tech", "health", "game", "science"])
+		);
 	},
 
 	methods: {
@@ -282,6 +305,10 @@ export default {
 				this.msgBox = true;
 				console.error(error);
 			}
+		},
+
+		randomize(arr) {
+			return arr[Math.floor(Math.random() * arr.length)];
 		},
 
 		toggleTheme() {
