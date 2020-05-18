@@ -3,7 +3,7 @@
     <v-img
       class="white--text align-end"
       height="200"
-      :src="mediaImg ? mediaImg : this.getRandomImg()"
+      :src="mediaImg ? mediaImg : randImg"
     >
       <v-chip class="my-2 mx-2">{{ id }}</v-chip>
     </v-img>
@@ -19,26 +19,33 @@
 
     <v-card-actions class="row py-0">
       <div class="col-12 pt-0">
-        <v-btn
-          class="primary--text mb-2"
-          :href="url == undefined ? '' : url"
-          target="_blank"
-          outlined
-          block
-        >
+        <v-btn class="primary--text mb-2" :href="url" target="_blank" outlined block>
           View Original<v-icon right>mdi-open-in-new</v-icon>
         </v-btn>
-        <v-btn
-          class="secondary--text"
-          :href="url == undefined ? '' : url"
-          target="_blank"
-          outlined
-          block
-        >
+        <v-btn class="secondary--text" @click="showMore = true" outlined block>
           Read More<v-icon right>mdi-chevron-double-right</v-icon>
         </v-btn>
       </div>
     </v-card-actions>
+
+    <v-dialog v-model="showMore" width="600px">
+      <v-card>
+        <v-img
+          class="white--text align-end"
+          height="200"
+          :src="mediaImg ? mediaImg : randImg"
+        ></v-img>
+        <v-card-title>
+          <span class="headline">{{ title }}</span>
+        </v-card-title>
+        <v-card-text v-html="description"></v-card-text>
+        <v-card-actions>
+          <v-btn color="primary darken-1" text block @click="showMore = false"
+            >Close</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -53,6 +60,15 @@ export default {
     mediaImg: String,
     id: String,
     date: String,
+  },
+
+  data: () => ({
+    showMore: false,
+    randImg: "",
+  }),
+
+  beforeMount() {
+    this.randImg = this.getRandomImg();
   },
 
   methods: {
