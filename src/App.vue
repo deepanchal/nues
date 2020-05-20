@@ -229,34 +229,38 @@ export default {
         .join("&");
     }, // Function to build request url
 
-    async getHeadlines() {
-      this.loading = true;
+    async fetcher(url) {
+      try {
+        this.loading = true;
+        const response = await this.$axios.get(url);
+        this.loading = false;
+        return response;
+      } catch (err) {
+        this.loading = false;
+        this.msgBox = true;
+        console.error(err);
+        return {};
+      }
+    },
 
+    async getHeadlines() {
       const queryString = this.buildQueryStr({
         apiKey: process.env.VUE_APP_NEWSKEY,
         language: "en",
         pageSize: 100,
       });
-
       const url = `https://newsapi.org/v2/top-headlines?${queryString}`;
-      try {
-        const response = await this.$axios.get(url);
-        this.results = response.data.articles;
+      const res = await this.fetcher(url);
+      this.results = res.data.articles;
 
-        // Filter to remove irrevelant results from headlines
-        this.results = this.results.filter((item) => {
-          const condition =
-            item.description === null ||
-            item.source.id === "buzzfeed" ||
-            item.source.id === "reddit-r-all";
-          return !condition;
-        });
-        this.loading = false;
-      } catch (error) {
-        this.loading = false;
-        this.msgBox = true;
-        console.error(error);
-      }
+      // Filter to remove irrevelant results from headlines
+      this.results = this.results.filter((item) => {
+        const condition =
+          item.description === null ||
+          item.source.id === "buzzfeed" ||
+          item.source.id === "reddit-r-all";
+        return !condition;
+      });
     },
 
     async getResultsFromSources(srcID) {
@@ -270,15 +274,8 @@ export default {
       });
 
       const url = `https://newsapi.org/v2/everything?${queryString}`;
-      try {
-        const response = await this.$axios.get(url);
-        this.searchResults = response.data.articles;
-        this.loading = false;
-      } catch (error) {
-        this.loading = false;
-        this.msgBox = true;
-        console.error(error);
-      }
+      const res = await this.fetcher(url);
+      this.searchResults = res.data.articles;
       this.toTop();
     }, // Function to fetch results from specific souce
 
@@ -293,15 +290,8 @@ export default {
       });
 
       const url = `https://newsapi.org/v2/everything?${queryString}`;
-      try {
-        const response = await this.$axios.get(url);
-        this.searchResults = response.data.articles;
-        this.loading = false;
-      } catch (error) {
-        this.loading = false;
-        this.msgBox = true;
-        console.error(error);
-      }
+      const res = await this.fetcher(url);
+      this.searchResults = res.data.articles;
     }, // Get articles from a search query
 
     randomize(arr) {

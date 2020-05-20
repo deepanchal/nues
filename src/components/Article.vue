@@ -22,14 +22,19 @@
         <v-btn class="primary--text mb-2" :href="url" target="_blank" outlined block>
           View Original<v-icon right>mdi-open-in-new</v-icon>
         </v-btn>
-        <v-btn class="secondary--text" @click="showMore = true" outlined block>
+        <v-btn
+          class="secondary--text"
+          @click="(showMore = true), (loading = true), getContent()"
+          outlined
+          block
+        >
           Read More<v-icon right>mdi-chevron-double-right</v-icon>
         </v-btn>
       </div>
     </v-card-actions>
 
     <v-dialog v-model="showMore" width="600px">
-      <v-card>
+      <v-card :loading="loading">
         <v-img
           class="white--text align-end"
           height="200"
@@ -38,7 +43,7 @@
         <v-card-title>
           <span class="headline">{{ title }}</span>
         </v-card-title>
-        <v-card-text v-html="description"></v-card-text>
+        <v-card-text v-html="mainContent"></v-card-text>
         <v-card-actions>
           <v-btn color="primary darken-1" text block @click="showMore = false"
             >Close</v-btn
@@ -64,7 +69,9 @@ export default {
 
   data: () => ({
     showMore: false,
+    loading: false,
     randImg: "",
+    mainContent: "",
   }),
 
   beforeMount() {
@@ -72,6 +79,23 @@ export default {
   },
 
   methods: {
+    async getContent() {
+      this.mainContent = "Loading...";
+      const articleUrl = this.url;
+      console.log(articleUrl);
+      const url = `https://us-central1-nuesify.cloudfunctions.net/nuesContent?url=${articleUrl}`;
+
+      try {
+        const response = await this.$axios.get(url);
+        this.mainContent = response.data.data.content;
+        console.log(response);
+        this.loading = false;
+      } catch (error) {
+        this.mainContent = "Unable to retrieve article. Please check out the original article link";
+        console.error(error);
+      }
+    },
+
     getRandomImg() {
       const stockImgArr = [
         "https://images.pexels.com/photos/2848021/pexels-photo-2848021.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
