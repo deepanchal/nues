@@ -87,7 +87,7 @@ export default {
 
       try {
         const response = await this.$axios.get(url);
-        this.mainContent = response.data.data.content;
+        this.mainContent = response.data.content;
         console.log(response);
         this.loading = false;
       } catch (error) {
