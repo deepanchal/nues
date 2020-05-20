@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuetify from 'vuetify/lib'
 import App from './App.vue'
+import './registerServiceWorker'
 const axios = require('axios');
 
 Vue.prototype.$axios = axios;
