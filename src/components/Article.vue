@@ -88,7 +88,6 @@ export default {
     async getContent() {
       this.mainContent = "Loading text...";
       const articleUrl = this.url;
-      console.log(articleUrl);
       const url = `https://us-central1-nuesify.cloudfunctions.net/nuesContent?url=${articleUrl}`;
 
       try {
