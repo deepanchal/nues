@@ -36,18 +36,24 @@
     <v-dialog v-model="showMore" width="600px">
       <v-card :loading="loading">
         <v-img
-          class="white--text align-end"
           height="200"
           :src="mediaImg ? mediaImg : randImg"
-        ></v-img>
+          ><v-btn
+            class="ma-2 grey lighten-3 black--text"
+            @click="showMore = false"
+            icon small
+            ><v-icon small>mdi-close</v-icon></v-btn
+          ></v-img
+        >
         <v-card-title>
-          <span class="headline">{{ title }}</span>
+          <span class="headline" style="wordBreak: normal">{{ title }}</span>
         </v-card-title>
-        <v-card-text v-html="mainContent"></v-card-text>
+        <v-card-text
+          style="wordBreak: normal; textAlign: justify"
+          v-html="mainContent"
+        ></v-card-text>
         <v-card-actions>
-          <v-btn color="primary darken-1" text block @click="showMore = false"
-            >Close</v-btn
-          >
+          <v-btn color="primary" text block @click="showMore = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -80,7 +86,7 @@ export default {
 
   methods: {
     async getContent() {
-      this.mainContent = "Loading...";
+      this.mainContent = "Loading text...";
       const articleUrl = this.url;
       console.log(articleUrl);
       const url = `https://us-central1-nuesify.cloudfunctions.net/nuesContent?url=${articleUrl}`;
@@ -88,10 +94,10 @@ export default {
       try {
         const response = await this.$axios.get(url);
         this.mainContent = response.data.content;
-        console.log(response);
         this.loading = false;
       } catch (error) {
-        this.mainContent = "Unable to retrieve article. Please check out the original article link";
+        this.loading = false;
+        this.mainContent = `Unable to retrieve article's text. Please check out the original article <a href="${articleUrl}" target="_blank">here</a>`;
         console.error(error);
       }
     },
