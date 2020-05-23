@@ -185,8 +185,9 @@
       </v-col>
       <v-col class="text-center" cols="12">
         Made with &hearts; using
-        <a href="https://vuetifyjs.com/" target="_blank">Vuetify</a> and
-        <a href="https://newsapi.org/" target="_blank">NewsAPI</a>
+        <a href="https://vuetifyjs.com/" target="_blank">Vuetify</a>
+        | Powered by
+        <a href="https://newsapi.org/" target="_blank">NewsorgAPI</a>
       </v-col>
     </v-footer>
   </v-app>
@@ -208,7 +209,7 @@ export default {
     fab: false, // displays scrollToTop button
     tabModel: "sources", // Changes tabs
     msgBox: false,
-    errMsg: "Oops, Something went Wrong 😕",
+    errMsg: "",
     providers: nuesProviders, // Loads an array of all available souce providers
     results: [], // Stores results for headlines
     searchResults: [], // Stores results for search query
@@ -234,9 +235,15 @@ export default {
         this.loading = true;
         const response = await this.$axios.get(url);
         this.loading = false;
+        console.log(response);
+        if (response.data.totalResults == 0) {
+          this.errMsg = "No results found 😕";
+          this.msgBox = true;
+        }
         return response;
       } catch (err) {
         this.loading = false;
+        this.errMsg = "Oops, Something went Wrong 😕";
         this.msgBox = true;
         console.error(err);
         return {};
@@ -245,12 +252,12 @@ export default {
 
     async getHeadlines() {
       const queryString = this.buildQueryStr({
-        apiKey: process.env.VUE_APP_NEWSKEY,
         language: "en",
         pageSize: 100,
       });
-      const url = `https://newsapi.org/v2/top-headlines?${queryString}`;
+      const url = `${process.env.VUE_APP_URL}/nuesapi/headlines?${queryString}`;
       const res = await this.fetcher(url);
+      console.log(res);
       this.results = res.data.articles;
 
       // Filter to remove irrevelant results from headlines
@@ -266,14 +273,13 @@ export default {
     async getResultsFromSources(srcID) {
       this.tabModel = "feed";
       const queryString = this.buildQueryStr({
-        apiKey: process.env.VUE_APP_NEWSKEY,
         sortBy: "popularity",
         sources: srcID,
         language: "en",
         pageSize: 100,
       });
 
-      const url = `https://newsapi.org/v2/everything?${queryString}`;
+      const url = `${process.env.VUE_APP_URL}/nuesapi/everything?${queryString}`;
       const res = await this.fetcher(url);
       this.searchResults = res.data.articles;
       this.toTop();
@@ -281,7 +287,6 @@ export default {
 
     async getSearchResults(query) {
       const queryString = this.buildQueryStr({
-        apiKey: process.env.VUE_APP_NEWSKEY,
         q: `"${query}"`,
         sortBy: "popularity",
         language: "en",
@@ -289,7 +294,7 @@ export default {
         excludeDomains: "buzzfeed.com",
       });
 
-      const url = `https://newsapi.org/v2/everything?${queryString}`;
+      const url = `${process.env.VUE_APP_URL}/nuesapi/everything?${queryString}`;
       const res = await this.fetcher(url);
       this.searchResults = res.data.articles;
     }, // Get articles from a search query

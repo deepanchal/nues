@@ -88,7 +88,7 @@ export default {
     async getContent() {
       this.mainContent = "Loading text...";
       const articleUrl = this.url;
-      const url = `https://us-central1-nuesify.cloudfunctions.net/nuesContent?url=${articleUrl}`;
+      const url = `${process.env.VUE_APP_URL}/nuesapi/scrape?url=${articleUrl}`;
 
       try {
         const response = await this.$axios.get(url);
