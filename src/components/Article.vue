@@ -5,16 +5,22 @@
       height="200"
       :src="mediaImg ? mediaImg : randImg"
     >
-      <v-chip class="my-2 mx-2">{{ id }}</v-chip>
+      <v-chip class="my-2 mx-2">
+        {{ source.id ? source.id : source.name.replace(".com", "") }}
+      </v-chip>
     </v-img>
     <v-card-title style="wordBreak: normal">{{ title }}</v-card-title>
-    <v-card-subtitle class="pb-2" style="wordBreak: normal"
-      >{{ author }}
+    <v-card-subtitle class="pb-2" style="wordBreak: normal">
+      {{ !author ? "Anonymous" : author.startsWith("http") ? "Anonymous" : author }}
     </v-card-subtitle>
 
     <v-card-text>
       <div class="overline mb-1">{{ new Date(date).toDateString() }}</div>
-      <div style="wordBreak: normal">{{ description }}</div>
+      <div style="wordBreak: normal">
+        {{
+          description.length > 140 ? description.substring(0, 140) + "..." : description
+        }}
+      </div>
     </v-card-text>
 
     <v-card-actions class="row py-0">
@@ -35,13 +41,12 @@
 
     <v-dialog v-model="showMore" width="600px">
       <v-card :loading="loading">
-        <v-img
-          height="200"
-          :src="mediaImg ? mediaImg : randImg"
+        <v-img height="200" :src="mediaImg ? mediaImg : randImg"
           ><v-btn
             class="ma-2 grey lighten-3 black--text"
             @click="showMore = false"
-            icon small
+            icon
+            small
             ><v-icon small>mdi-close</v-icon></v-btn
           ></v-img
         >
@@ -69,7 +74,7 @@ export default {
     description: String,
     url: String,
     mediaImg: String,
-    id: String,
+    source: Object,
     date: String,
   },
 

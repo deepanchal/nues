@@ -33,9 +33,7 @@
               >
                 <!-- Lazy loading article cards to make app fast -->
                 <v-lazy
-                  :options="{
-                    threshold: 0.5,
-                  }"
+                  :options="{ threshold: 0.5 }"
                   transition="scroll-y-reverse-transition"
                   min-height="350"
                 >
@@ -43,14 +41,10 @@
                     <Article
                       :mediaImg="article.urlToImage"
                       :title="article.title"
-                      :author="article.author ? article.author : 'Anonymous'"
+                      :author="article.author"
                       :url="article.url"
                       :description="article.description"
-                      :id="
-                        article.source.id
-                          ? article.source.id
-                          : article.source.name.replace('.com', '')
-                      "
+                      :source="article.source"
                       :date="article.publishedAt"
                     />
                   </v-card>
@@ -69,9 +63,7 @@
                 :key="index"
               >
                 <v-lazy
-                  :options="{
-                    threshold: 0.5,
-                  }"
+                  :options="{ threshold: 0.5 }"
                   transition="scroll-y-reverse-transition"
                   min-height="100"
                 >
@@ -115,9 +107,7 @@
                 :key="index"
               >
                 <v-lazy
-                  :options="{
-                    threshold: 0.5,
-                  }"
+                  :options="{ threshold: 0.5 }"
                   transition="scroll-y-reverse-transition"
                   min-height="350"
                 >
@@ -125,14 +115,10 @@
                     <Article
                       :mediaImg="article.urlToImage"
                       :title="article.title"
-                      :author="article.author ? article.author : 'Anonymous'"
+                      :author="article.author"
                       :url="article.url"
                       :description="article.description"
-                      :id="
-                        article.source.id
-                          ? article.source.id
-                          : article.source.name.replace('.com', '')
-                      "
+                      :source="article.source"
                       :date="article.publishedAt"
                     />
                   </v-card>
@@ -175,7 +161,7 @@
     </v-content>
 
     <v-footer class="font-weight-medium">
-      <v-col class="text-center" cols="12">
+      <v-col class="text-center ma-0 pa-0" cols="12">
         <v-container>
           All product names, logos, and brands are property of their respective owners.
           All company, product and service names used in this website are for
@@ -184,10 +170,9 @@
         </v-container>
       </v-col>
       <v-col class="text-center" cols="12">
-        Made with &hearts; using
+        Powered by <a href="https://newsapi.org/" target="_blank">NewsorgAPI</a>
+        <br />Made with &hearts; using
         <a href="https://vuetifyjs.com/" target="_blank">Vuetify</a>
-        | Powered by
-        <a href="https://newsapi.org/" target="_blank">NewsorgAPI</a>
       </v-col>
     </v-footer>
   </v-app>
@@ -235,7 +220,6 @@ export default {
         this.loading = true;
         const response = await this.$axios.get(url);
         this.loading = false;
-        console.log(response);
         if (response.data.totalResults == 0) {
           this.errMsg = "No results found 😕";
           this.msgBox = true;
@@ -257,7 +241,6 @@ export default {
       });
       const url = `${process.env.VUE_APP_URL}/nuesapi/headlines?${queryString}`;
       const res = await this.fetcher(url);
-      console.log(res);
       this.results = res.data.articles;
 
       // Filter to remove irrevelant results from headlines
