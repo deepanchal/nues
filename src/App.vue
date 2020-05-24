@@ -25,9 +25,9 @@
       <v-tabs-items v-model="tabModel">
         <v-tab-item value="headlines">
           <v-container>
-            <div class="row mx-auto">
+            <v-row>
               <div
-                class="col-sm-12 col-md-6 col-lg-4"
+                class="col-12 col-md-6 col-lg-4"
                 v-for="(article, index) in results"
                 :key="index"
               >
@@ -50,7 +50,7 @@
                   </v-card>
                 </v-lazy>
               </div>
-            </div>
+            </v-row>
           </v-container>
         </v-tab-item>
 
@@ -72,7 +72,7 @@
                     hover
                     light
                     class="blue-grey lighten-4"
-                    @click="(loading = true), getResultsFromSources(item.id)"
+                    @click="getResultsFromSources(item.id)"
                   >
                     <Source
                       :name="item.name"
@@ -89,20 +89,39 @@
 
         <v-tab-item value="feed">
           <v-container>
-            <v-text-field
-              color="accent"
-              prepend-inner-icon="mdi-magnify"
-              label="Search Popular Articles"
-              solo-inverted
-              clearable
-              hide-details
-              flat
-              @keyup.13="(loading = true), getSearchResults($event.target.value)"
-            ></v-text-field>
+            <v-row>
+              <div class="col-12 col-sm-9 pb-0 pr-sm-0">
+                <v-text-field
+                  v-model="searchQuery"
+                  color="accent"
+                  prepend-inner-icon="mdi-magnify"
+                  label="Search..."
+                  @keyup.13="getSearchResults(searchQuery)"
+                  flat
+                  solo-inverted
+                  clearable
+                  hide-details
+                ></v-text-field>
+              </div>
 
-            <div class="row mx-auto">
+              <div class="col-12 col-sm-3">
+                <v-select
+                  color="accent"
+                  :items="['Popular', 'Relevant', 'Latest']"
+                  v-model="sortBy"
+                  :value="sortBy"
+                  label="Sort-By"
+                  @change="getSearchResults(searchQuery)"
+                  flat
+                  solo-inverted
+                  hide-details
+                ></v-select>
+              </div>
+            </v-row>
+
+            <v-row>
               <div
-                class="col-sm-12 col-md-6 col-lg-4"
+                class="col-12 col-md-6 col-lg-4"
                 v-for="(article, index) in searchResults"
                 :key="index"
               >
@@ -124,12 +143,14 @@
                   </v-card>
                 </v-lazy>
               </div>
-            </div>
+            </v-row>
           </v-container>
         </v-tab-item>
       </v-tabs-items>
+    </v-content>
 
-      <!-- Extra features like loaders, Handling error messages, scrollToTop -->
+    <!-- Extra features like loaders, Footers, Handling error messages, scrollToTop -->
+    <div>
       <v-snackbar v-model="msgBox" color="error" top>
         {{ errMsg }}
         <v-btn color="white" icon @click="msgBox = false">
@@ -158,23 +179,23 @@
           size="72"
         ></v-progress-circular>
       </v-overlay>
-    </v-content>
 
-    <v-footer class="font-weight-medium">
-      <v-col class="text-center ma-0 pa-0" cols="12">
-        <v-container>
-          All product names, logos, and brands are property of their respective owners.
-          All company, product and service names used in this website are for
-          identificational / educational purposes only. Use of these names, logos, and
-          brands does not imply endorsement.
-        </v-container>
-      </v-col>
-      <v-col class="text-center" cols="12">
-        Powered by <a href="https://newsapi.org/" target="_blank">NewsorgAPI</a>
-        <br />Made with &hearts; using
-        <a href="https://vuetifyjs.com/" target="_blank">Vuetify</a>
-      </v-col>
-    </v-footer>
+      <v-footer class="font-weight-medium">
+        <v-col class="text-center ma-0 pa-0" cols="12">
+          <v-container>
+            All product names, logos, and brands are property of their respective owners.
+            All company, product and service names used in this website are for
+            identificational / educational purposes only. Use of these names, logos, and
+            brands does not imply endorsement.
+          </v-container>
+        </v-col>
+        <v-col class="text-center" cols="12">
+          Powered by <a href="https://newsapi.org/" target="_blank">NewsorgAPI</a>
+          <br />Made with &hearts; using
+          <a href="https://vuetifyjs.com/" target="_blank">Vuetify</a>
+        </v-col>
+      </v-footer>
+    </div>
   </v-app>
 </template>
 
@@ -195,8 +216,10 @@ export default {
     tabModel: "sources", // Changes tabs
     msgBox: false,
     errMsg: "",
+    sortBy: "Latest",
     providers: nuesProviders, // Loads an array of all available souce providers
     results: [], // Stores results for headlines
+    searchQuery: "",
     searchResults: [], // Stores results for search query
   }),
 
@@ -218,6 +241,7 @@ export default {
     async fetcher(url) {
       try {
         this.loading = true;
+        this.msgBox = false;
         const response = await this.$axios.get(url);
         this.loading = false;
         if (response.data.totalResults == 0) {
@@ -269,9 +293,10 @@ export default {
     }, // Function to fetch results from specific souce
 
     async getSearchResults(query) {
+      if (!query) return; // Stop execution if query is empty
       const queryString = this.buildQueryStr({
-        q: `"${query}"`,
-        sortBy: "popularity",
+        q: query,
+        sortBy: this.translateFilter(this.sortBy),
         language: "en",
         pageSize: 100,
         excludeDomains: "buzzfeed.com",
@@ -281,6 +306,13 @@ export default {
       const res = await this.fetcher(url);
       this.searchResults = res.data.articles;
     }, // Get articles from a search query
+
+    translateFilter(str) {
+      if (str == "Latest") return "publishedAt";
+      else if (str == "Relevant") return "relevancy";
+      else if (str == "Popular") return "popularity";
+      else return "relevancy";
+    }, // translate the options to pass in API
 
     randomize(arr) {
       return arr[Math.floor(Math.random() * arr.length)];
@@ -304,6 +336,10 @@ export default {
 
     toTop() {
       this.$vuetify.goTo(0);
+    },
+
+    reload() {
+      window.location.reload();
     },
   },
 };
