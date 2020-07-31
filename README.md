@@ -1,5 +1,7 @@
 # Nues
+
 [![Netlify Status](https://api.netlify.com/api/v1/badges/ab059c83-5191-4c4b-a8a4-db08f4a2858f/deploy-status)](https://app.netlify.com/sites/nues/deploys)
+![Node.js CI](https://github.com/deepanchal/nues/workflows/Node.js%20CI/badge.svg)
 
 Nues gets all latest news from different providers in one place. It is my personal project built using Vue and nodeJS. I used news API to get news articles from various source providers. The project gets its name from News + Vue = Nues
 
