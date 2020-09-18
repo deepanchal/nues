@@ -5,6 +5,9 @@
 
 Nues gets all latest news from different providers in one place. It is my personal project built using Vue and nodeJS. I used news API to get news articles from various source providers. The project gets its name from News + Vue = Nues
 
+![screenshot1](/screenshots/ss1.png)
+![screenshot2](/screenshots/ss2.png)
+
 ## Project setup
 ```
 npm install
